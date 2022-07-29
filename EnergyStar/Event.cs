@@ -24,6 +24,9 @@ namespace EnergyStar
         public static extern bool PeekMessage(out Win32WindowForegroundMessage lpMsg, IntPtr hwnd, uint wMsgFilterMin, uint wMsgFilterMax, uint wRemoveMsg);
 
         [DllImport("user32.dll")]
+        public static extern bool GetMessage(out Win32WindowForegroundMessage lpMsg, IntPtr hwnd, uint wMsgFilterMin, uint wMsgFilterMax);
+
+        [DllImport("user32.dll")]
         public static extern bool TranslateMessage(ref Win32WindowForegroundMessage lpMsg);
 
         [DllImport("user32.dll")]

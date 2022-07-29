@@ -32,7 +32,7 @@
 
             while (true)
             {
-                if (Event.PeekMessage(out Win32WindowForegroundMessage msg, IntPtr.Zero, 0, 0, Event.PM_REMOVE))
+                if (Event.GetMessage(out Win32WindowForegroundMessage msg, IntPtr.Zero, 0, 0))
                 {
                     if (msg.Message == Event.WM_QUIT)
                     {
