@@ -8,37 +8,42 @@ namespace EnergyStar
     {
         public static readonly HashSet<string> BypassProcessList = new HashSet<string>
         {
-            // Not ourselves,
-            "EnergyStar.exe",
+            // Not ourselves
+            "EnergyStar.exe".ToLowerInvariant(),
             // Edge has energy awareness
             "msedge.exe",
-            "WebViewHost.exe",
+            "WebViewHost.exe".ToLowerInvariant(),
             // UWP Frame has special handling, should not be throttled,
-            "ApplicationFrameHost.exe",
+            "ApplicationFrameHost.exe".ToLowerInvariant(),
             // Fire extinguisher should not catch fire
             "taskmgr.exe",
             "procmon.exe",
             "procmon64.exe",
             // Widgets
-            "Widgets.exe",
+            "Widgets.exe".ToLowerInvariant(),
             // System shell
+            "dwm.exe",
             "explorer.exe",
-            "ShellExperienceHost.exe",
-            "StartMenuExperienceHost.exe",
-            "SearchHost.exe",
+            "ShellExperienceHost.exe".ToLowerInvariant(),
+            "StartMenuExperienceHost.exe".ToLowerInvariant(),
+            "SearchHost.exe".ToLowerInvariant(),
             "sihost.exe",
+            "fontdrvhost.exe",
             // IME
-            "ChsIME.exe",
+            "ChsIME.exe".ToLowerInvariant(),
             "ctfmon.exe",
 #if DEBUG
             // Visual Studio
             "devenv.exe",
 #endif
             // System Service - they have their awareness
+            "csrss.exe",
+            "smss.exe",
             "svchost.exe",
             // WUDF
-            "WUDFRd.exe",
+            "WUDFRd.exe".ToLowerInvariant(),
         };
+        // Speical handling needs for UWP to get the child window process
         public const string UWPFrameHostApp = "ApplicationFrameHost.exe";
 
         private static uint pendingProcPid = 0;
@@ -74,15 +79,9 @@ namespace EnergyStar
 
         private static void ToggleEfficiencyMode(IntPtr hProcess, bool enable)
         {
-            if (!Win32Api.SetProcessInformation(hProcess, Win32Api.PROCESS_INFORMATION_CLASS.ProcessPowerThrottling,
-                enable ? pThrottleOn : pThrottleOff, (uint) szControlBlock))
-            {
-                Console.WriteLine($"Unable to set EcoQos {enable} for app: {hProcess} {Marshal.GetLastWin32Error()}");
-            }
-            if (!Win32Api.SetPriorityClass(hProcess, enable ? Win32Api.PriorityClass.IDLE_PRIORITY_CLASS : Win32Api.PriorityClass.NORMAL_PRIORITY_CLASS))
-            {
-                Console.WriteLine($"Unable to set priority {enable} for app: {hProcess} {Marshal.GetLastWin32Error()}");
-            }
+            Win32Api.SetProcessInformation(hProcess, Win32Api.PROCESS_INFORMATION_CLASS.ProcessPowerThrottling,
+                enable ? pThrottleOn : pThrottleOff, (uint)szControlBlock);
+            Win32Api.SetPriorityClass(hProcess, enable ? Win32Api.PriorityClass.IDLE_PRIORITY_CLASS : Win32Api.PriorityClass.NORMAL_PRIORITY_CLASS);
         }
 
         private static string GetProcessNameFromHandle(IntPtr hProcess)
@@ -139,7 +138,7 @@ namespace EnergyStar
             }
 
             // Boost the current foreground app, and then impose EcoQoS for previous foreground app
-            var bypass = BypassProcessList.Contains(appName);
+            var bypass = BypassProcessList.Contains(appName.ToLowerInvariant());
             if (!bypass)
             {
                 Console.WriteLine($"Boost {appName}");
@@ -167,6 +166,21 @@ namespace EnergyStar
             }
 
             Win32Api.CloseHandle(procHandle);
+        }
+
+        public static void ThrottleAllUserProcessesOnStartup()
+        {
+            var runningProcesses = Process.GetProcesses();
+            var currentSessionID = Process.GetCurrentProcess().SessionId;
+
+            var sameAsThisSession = runningProcesses.Where(p => p.SessionId == currentSessionID);
+            foreach (var proc in sameAsThisSession)
+            {
+                if (BypassProcessList.Contains($"{proc.ProcessName}.exe".ToLowerInvariant())) continue;
+                var hProcess = Win32Api.OpenProcess((uint)Win32Api.ProcessAccessFlags.SetInformation, false, (uint) proc.Id);
+                ToggleEfficiencyMode(hProcess, true);
+                Win32Api.CloseHandle(hProcess);
+            }
         }
     }
 }

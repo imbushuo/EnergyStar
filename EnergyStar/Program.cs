@@ -5,6 +5,7 @@
         static void Main(string[] args)
         {
             HookManager.SubscribeToWindowEvents();
+            EnergyManager.ThrottleAllUserProcessesOnStartup();
 
             while (true)
             {
