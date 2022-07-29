@@ -168,7 +168,7 @@ namespace EnergyStar
             Win32Api.CloseHandle(procHandle);
         }
 
-        public static void ThrottleAllUserProcessesOnStartup()
+        public static void ThrottleAllUserBackgroundProcesses()
         {
             var runningProcesses = Process.GetProcesses();
             var currentSessionID = Process.GetCurrentProcess().SessionId;
@@ -176,6 +176,7 @@ namespace EnergyStar
             var sameAsThisSession = runningProcesses.Where(p => p.SessionId == currentSessionID);
             foreach (var proc in sameAsThisSession)
             {
+                if (proc.Id == pendingProcPid) continue;
                 if (BypassProcessList.Contains($"{proc.ProcessName}.exe".ToLowerInvariant())) continue;
                 var hProcess = Win32Api.OpenProcess((uint)Win32Api.ProcessAccessFlags.SetInformation, false, (uint) proc.Id);
                 ToggleEfficiencyMode(hProcess, true);
