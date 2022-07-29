@@ -20,9 +20,18 @@ namespace EnergyStar
             [In] PROCESS_INFORMATION_CLASS ProcessInformationClass, IntPtr ProcessInformation, uint ProcessInformationSize);
 
         [DllImport("kernel32.dll", SetLastError = true)]
+        public static extern bool SetPriorityClass(IntPtr handle, PriorityClass priorityClass);
+
+        [DllImport("kernel32.dll", SetLastError = true)]
         [SuppressUnmanagedCodeSecurity]
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool CloseHandle(IntPtr hObject);
+
+        public delegate bool WindowEnumProc(IntPtr hwnd, IntPtr lparam);
+
+        [DllImport("user32.dll")]
+        [return: MarshalAs(UnmanagedType.Bool)]
+        public static extern bool EnumChildWindows(IntPtr hwnd, WindowEnumProc callback, IntPtr lParam);
 
         [Flags]
         public enum ProcessAccessFlags : uint
@@ -61,6 +70,18 @@ namespace EnergyStar
         {
             None = 0x0,
             PROCESS_POWER_THROTTLING_EXECUTION_SPEED = 0x1,
+        }
+
+        public enum PriorityClass : uint
+        {
+            ABOVE_NORMAL_PRIORITY_CLASS = 0x8000,
+            BELOW_NORMAL_PRIORITY_CLASS = 0x4000,
+            HIGH_PRIORITY_CLASS = 0x80,
+            IDLE_PRIORITY_CLASS = 0x40,
+            NORMAL_PRIORITY_CLASS = 0x20,
+            PROCESS_MODE_BACKGROUND_BEGIN = 0x100000,// 'Windows Vista/2008 and higher
+            PROCESS_MODE_BACKGROUND_END = 0x200000,//   'Windows Vista/2008 and higher
+            REALTIME_PRIORITY_CLASS = 0x100
         }
 
         [StructLayout(LayoutKind.Sequential)]
