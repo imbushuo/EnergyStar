@@ -4,7 +4,8 @@ Class = SoftwareComponent
 ClassGuid = {5c4c3332-344d-483c-8739-259e934c9cc8}
 Provider = %ManufacturerName%
 CatalogFile = ProjectEnergyStar.cat
-PnpLockdown=1
+DriverVer = 07/30/2022,2022.0730.1000.1000
+PnpLockdown = 1
 
 [Manufacturer]
 %ManufacturerName% = ProjEnergyStar, NT$ARCH$
