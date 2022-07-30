@@ -2,11 +2,12 @@
 
   <PropertyGroup>
     <OutputType Condition="'$(Configuration)'=='ReleaseInvisible'">WinExe</OutputType>
-	<OutputType Condition="'$(Configuration)'!='ReleaseInvisible'">Exe</OutputType>
+    <OutputType Condition="'$(Configuration)'!='ReleaseInvisible'">Exe</OutputType>
     <TargetFramework>net6.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>True</AllowUnsafeBlocks>
+    <Configurations>Debug;Release;ReleaseInvisible</Configurations>
   </PropertyGroup>
 
   <ItemGroup>
