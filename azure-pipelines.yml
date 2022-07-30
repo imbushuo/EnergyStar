@@ -42,3 +42,14 @@ steps:
     arguments: '-c ReleaseInvisible -r win-arm64 -p:PublishSingleFile=true --self-contained true'
     zipAfterPublish: false
     modifyOutputPath: false
+
+- task: PowerShell@2
+  displayName: "Prepare and Package Deliverables"
+  inputs:
+    filePath: './Package/buildout.ps1'
+    
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: 'Package\*.cab'
+    ArtifactName: 'PreSignRelease'
+    publishLocation: 'Container'
