@@ -20,9 +20,9 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Publish for win-x64
-      run: dotnet publish -c Release -r win-x64 -p:PublishSingleFile=true --self-contained true
+      run: dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:PublishTrimmed=True
     - name: Publish for win-arm64
-      run: dotnet publish -c Release -r win-arm64 -p:PublishSingleFile=true --self-contained true
+      run: dotnet publish -c Release -r win-arm64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:PublishTrimmed=True
     - uses: actions/upload-artifact@v3
       with:
         name: release-win-x64

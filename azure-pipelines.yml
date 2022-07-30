@@ -23,7 +23,7 @@ steps:
     command: 'publish'
     publishWebProjects: false
     projects: 'EnergyStar/EnergyStar.csproj'
-    arguments: '-c ReleaseInvisible -r win-x64 -p:PublishSingleFile=true --self-contained true'
+    arguments: '-c ReleaseInvisible -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:PublishTrimmed=True'
     zipAfterPublish: false
     modifyOutputPath: false
 
@@ -33,7 +33,7 @@ steps:
     command: 'publish'
     publishWebProjects: false
     projects: 'EnergyStar/EnergyStar.csproj'
-    arguments: '-c ReleaseInvisible -r win-arm64 -p:PublishSingleFile=true --self-contained true'
+    arguments: '-c ReleaseInvisible -r win-arm64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:PublishTrimmed=True'
     zipAfterPublish: false
     modifyOutputPath: false
 
