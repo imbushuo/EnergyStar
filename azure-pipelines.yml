@@ -1,0 +1,44 @@
+trigger:
+- master
+
+pool:
+  vmImage: 'windows-latest'
+
+variables:
+  buildPlatform: 'Any CPU'
+  buildConfiguration: 'Release'
+
+steps:
+- task: NuGetToolInstaller@1
+
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'restore'
+    projects: 'EnergyStar/EnergyStar.csproj'
+    feedsToUse: 'select'
+    
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: 'EnergyStar/EnergyStar.csproj'
+    arguments: '-c ReleaseInvisible'
+    
+- task: DotNetCoreCLI@2
+  displayName: "Release Prod Windows x64"
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: 'EnergyStar/EnergyStar.csproj'
+    arguments: '-c ReleaseInvisible -r win-x64 -p:PublishSingleFile=true --self-contained true'
+    zipAfterPublish: false
+    modifyOutputPath: false
+
+- task: DotNetCoreCLI@2
+  displayName: "Release Prod Windows ARM64"
+  inputs:
+    command: 'publish'
+    publishWebProjects: false
+    projects: 'EnergyStar/EnergyStar.csproj'
+    arguments: '-c ReleaseInvisible -r win-arm64 -p:PublishSingleFile=true --self-contained true'
+    zipAfterPublish: false
+    modifyOutputPath: false
