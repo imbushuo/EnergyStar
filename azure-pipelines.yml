@@ -9,19 +9,13 @@ variables:
   buildConfiguration: 'Release'
 
 steps:
-- task: NuGetToolInstaller@1
 
 - task: DotNetCoreCLI@2
+  displayName: "NuGet Restore"
   inputs:
     command: 'restore'
     projects: 'EnergyStar/EnergyStar.csproj'
     feedsToUse: 'select'
-    
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'build'
-    projects: 'EnergyStar/EnergyStar.csproj'
-    arguments: '-c ReleaseInvisible'
     
 - task: DotNetCoreCLI@2
   displayName: "Release Prod Windows x64"
@@ -49,7 +43,8 @@ steps:
     filePath: './Package/buildout.ps1'
     
 - task: PublishBuildArtifacts@1
+  displayName: "Upload Artifacts"
   inputs:
-    PathtoPublish: 'Package\*.cab'
+    PathtoPublish: 'Package'
     ArtifactName: 'PreSignRelease'
     publishLocation: 'Container'
