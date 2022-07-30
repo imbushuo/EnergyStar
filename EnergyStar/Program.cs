@@ -33,7 +33,7 @@ namespace EnergyStar
             if (Environment.OSVersion.Version.Build < 22000)
             {
                 Console.WriteLine("E: You are too poor to use this program.");
-                Console.WriteLine("E: Please upgrade to Windows 11 22H2 for best result, and considering ThinkPad Z13 as your next laptop.");
+                Console.WriteLine("E: Please upgrade to Windows 11 22H2 for best result, and consider ThinkPad Z13 as your next laptop.");
                 // ERROR_CALL_NOT_IMPLEMENTED
                 Environment.Exit(120);
             }
