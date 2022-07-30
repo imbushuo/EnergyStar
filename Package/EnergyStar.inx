@@ -1,0 +1,45 @@
+[Version]
+Signature = "$Windows NT$"
+Class = SoftwareComponent
+ClassGuid = {5c4c3332-344d-483c-8739-259e934c9cc8}
+Provider = %ManufacturerName%
+CatalogFile = ProjectEnergyStar.cat
+PnpLockdown=1
+
+[Manufacturer]
+%ManufacturerName% = ProjEnergyStar, NT$ARCH$
+
+[ProjEnergyStar.NT$ARCH$]
+%DeviceName% = ProjEnergyStar_Install, SWC\PROJECT_ENERGY_STAR_USER_APP
+
+[SourceDisksFiles]
+EnergyStar.exe = 1
+
+[SourceDisksNames]
+1 = %DiskName%
+
+[DestinationDirs]
+ProjEnergyStar_CopyFiles = 13 ; copy to driverstore
+
+[ProjEnergyStar_Install.NT]
+CopyFiles = ProjEnergyStar_CopyFiles
+
+[ProjEnergyStar_Install.NT.Services]
+AddService = , 0x00000002
+
+[ProjEnergyStar_Install.NT.Software]
+AddSoftware = EnergyStar,, ProjEnergyStar_SoftwareInstall
+
+[ProjEnergyStar_SoftwareInstall]
+SoftwareType = 1
+SoftwareBinary = EnergyStar.exe
+SoftwareVersion = 1.0.0.0
+
+[ProjEnergyStar_CopyFiles]
+EnergyStar.exe
+
+[Strings]
+ManufacturerName = "Project EnergyStar"
+DiskName = "EnergyStar DCH Component Installation Disk"
+DeviceName = "EnergyStar DCH Component Device"
+

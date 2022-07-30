@@ -3,18 +3,21 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio Version 17
 VisualStudioVersion = 17.2.32630.192
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "EnergyStar", "EnergyStar\EnergyStar.csproj", "{1C7C559D-8A2F-4C66-8EE0-64D8C97F0FAA}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "EnergyStar", "EnergyStar\EnergyStar.csproj", "{1C7C559D-8A2F-4C66-8EE0-64D8C97F0FAA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
 		Release|Any CPU = Release|Any CPU
+		ReleaseInvisible|Any CPU = ReleaseInvisible|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
 		{1C7C559D-8A2F-4C66-8EE0-64D8C97F0FAA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
 		{1C7C559D-8A2F-4C66-8EE0-64D8C97F0FAA}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{1C7C559D-8A2F-4C66-8EE0-64D8C97F0FAA}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{1C7C559D-8A2F-4C66-8EE0-64D8C97F0FAA}.Release|Any CPU.Build.0 = Release|Any CPU
+		{1C7C559D-8A2F-4C66-8EE0-64D8C97F0FAA}.ReleaseInvisible|Any CPU.ActiveCfg = ReleaseInvisible|Any CPU
+		{1C7C559D-8A2F-4C66-8EE0-64D8C97F0FAA}.ReleaseInvisible|Any CPU.Build.0 = ReleaseInvisible|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
