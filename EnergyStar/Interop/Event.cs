@@ -1,6 +1,6 @@
 ﻿using System.Runtime.InteropServices;
 
-namespace EnergyStar
+namespace EnergyStar.Interop
 {
     [StructLayout(LayoutKind.Sequential)]
     internal struct Win32WindowForegroundMessage

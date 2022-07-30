@@ -1,4 +1,6 @@
-﻿namespace EnergyStar
+﻿using EnergyStar.Interop;
+
+namespace EnergyStar
 {
     internal class Program
     {

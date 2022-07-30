@@ -1,4 +1,5 @@
-﻿using System.Diagnostics;
+﻿using EnergyStar.Interop;
+using System.Diagnostics;
 using System.Runtime.InteropServices;
 using System.Text;
 
@@ -13,7 +14,7 @@ namespace EnergyStar
             // Edge has energy awareness
             "msedge.exe",
             "WebViewHost.exe".ToLowerInvariant(),
-            // UWP Frame has special handling, should not be throttled,
+            // UWP Frame has special handling, should not be throttled
             "ApplicationFrameHost.exe".ToLowerInvariant(),
             // Fire extinguisher should not catch fire
             "taskmgr.exe",

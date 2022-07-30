@@ -2,7 +2,7 @@
 using System.Security;
 using System.Text;
 
-namespace EnergyStar
+namespace EnergyStar.Interop
 {
     internal class Win32Api
     {

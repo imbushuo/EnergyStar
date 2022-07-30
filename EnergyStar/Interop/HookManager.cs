@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel;
 using System.Runtime.InteropServices;
 
-namespace EnergyStar
+namespace EnergyStar.Interop
 {
     internal class HookManager
     {
@@ -13,6 +13,9 @@ namespace EnergyStar
         private const int EVENT_SYSTEM_FOREGROUND = 3;
 
         private static IntPtr windowEventHook;
+        // Explicitly declare it to prevent GC
+        // See: https://stackoverflow.com/questions/6193711/call-has-been-made-on-garbage-collected-delegate-in-c
+        private static WinEventProc hookProcDelegate = WindowEventCallback;
 
         public static void SubscribeToWindowEvents()
         {
@@ -22,7 +25,7 @@ namespace EnergyStar
                     EVENT_SYSTEM_FOREGROUND, // eventMin
                     EVENT_SYSTEM_FOREGROUND, // eventMax
                     IntPtr.Zero,             // hmodWinEventProc
-                    WindowEventCallback,     // lpfnWinEventProc
+                    hookProcDelegate,        // lpfnWinEventProc
                     0,                       // idProcess
                     0,                       // idThread
                     WINEVENT_OUTOFCONTEXT | WINEVENT_SKIPOWNPROCESS);
@@ -49,7 +52,7 @@ namespace EnergyStar
             EnergyManager.HandleForegroundEvent(hwnd);
         }
 
-        private delegate void WinEventProc(IntPtr hWinEventHook, uint eventType,
+        public delegate void WinEventProc(IntPtr hWinEventHook, uint eventType,
             IntPtr hwnd, int idObject, int idChild, uint dwEventThread, uint dwmsEventTime);
 
         [DllImport("user32.dll", SetLastError = true)]
