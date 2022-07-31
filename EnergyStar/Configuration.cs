@@ -15,7 +15,12 @@ namespace EnergyStar
         {
             string json = File.ReadAllText("settings.json");
             // TODO: optimize logic
-            return JsonSerializer.Deserialize(json, ConfigurationJsonContext.Default.Configuration)!;
+            var options = new JsonSerializerOptions
+            {
+                ReadCommentHandling = JsonCommentHandling.Skip,
+            };
+            return JsonSerializer.Deserialize(json,
+                new ConfigurationJsonContext(options).Configuration)!;
         }
     }
 
