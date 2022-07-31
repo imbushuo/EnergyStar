@@ -61,6 +61,7 @@ namespace EnergyStar
 
             cts.Cancel();
             HookManager.UnsubscribeWindowEvents();
+            EnergyManager.RecoverAllUserProcesses();
         }
     }
 }
