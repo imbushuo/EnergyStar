@@ -1,0 +1,34 @@
+{
+  "exemptions": [
+    //Not ourselves
+    "EnergyStar.exe",
+    // Edge has energy awareness
+    "msedge.exe",
+    "WebViewHost.exe",
+    // UWP Frame has special handling, should not be throttled
+    "ApplicationFrameHost.exe",
+    // Fire extinguisher should not catch fire
+    "taskmgr.exe",
+    "procmon.exe",
+    "procmon64.exe",
+    // Widgets
+    "Widgets.exe",
+    // System shell
+    "dwm.exe",
+    "explorer.exe",
+    "ShellExperienceHost.exe",
+    "StartMenuExperienceHost.exe",
+    "SearchHost.exe",
+    "sihost.exe",
+    "fontdrvhost.exe",
+    // IME
+    "ChsIME.exe",
+    "ctfmon.exe",
+    // System Service - they have their awareness
+    "csrss.exe",
+    "smss.exe",
+    "svchost.exe",
+    // WUDF
+    "WUDFRd.exe"
+  ]
+}

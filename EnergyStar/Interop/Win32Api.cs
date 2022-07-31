@@ -33,6 +33,14 @@ namespace EnergyStar.Interop
         [return: MarshalAs(UnmanagedType.Bool)]
         public static extern bool EnumChildWindows(IntPtr hwnd, WindowEnumProc callback, IntPtr lParam);
 
+        // We don't need to bloat this app with WinForm/WPF to show a simple message box
+        [DllImport("user32.dll")]
+        public static extern int MessageBox(IntPtr hInstance, string lpText, string lpCaption, uint type);
+
+        // two message box releated constants
+        public const int MB_OK = 0x00000000;
+        public const int MB_ICONERROR = 0x00000010;
+
         [Flags]
         public enum ProcessAccessFlags : uint
         {

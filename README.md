@@ -13,7 +13,6 @@ EnergyStar is a terrible* Windows application that leverages [Windows EcoQoS API
 * Child processes do not get boosted when the parent process receives input focus.
 * Throttle is always engaged regardless of power scheme and power source.
 * System processes (which is Session 0) do not get throttled. Currently there are some assumption that non-user processes know what they are doing.
-* Process exemption list is not user configurable.
 
 ## Usage
 
