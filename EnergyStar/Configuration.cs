@@ -7,11 +7,11 @@ using System.Threading.Tasks;
 
 namespace EnergyStar
 {
-    internal class Configuration
+    internal class Settings
     {
         public string[] Exemptions { get; set; } = new string[] { };
 
-        public static Configuration Load()
+        public static Settings Load()
         {
             string json = File.ReadAllText("settings.json");
             // TODO: optimize logic
@@ -20,7 +20,7 @@ namespace EnergyStar
                 ReadCommentHandling = JsonCommentHandling.Skip,
             };
             return JsonSerializer.Deserialize(json,
-                new ConfigurationJsonContext(options).Configuration)!;
+                new SettingsJsonContext(options).Settings)!;
         }
     }
 
@@ -28,8 +28,8 @@ namespace EnergyStar
         PropertyNamingPolicy = JsonKnownNamingPolicy.CamelCase,
         // We only need metadata mode because we only do deserialization.
         GenerationMode = JsonSourceGenerationMode.Metadata)]
-    [JsonSerializable(typeof(Configuration))]
-    internal partial class ConfigurationJsonContext : JsonSerializerContext
+    [JsonSerializable(typeof(Settings))]
+    internal partial class SettingsJsonContext : JsonSerializerContext
     {
 
     }

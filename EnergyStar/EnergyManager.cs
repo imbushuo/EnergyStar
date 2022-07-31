@@ -26,8 +26,8 @@ namespace EnergyStar
 
         static EnergyManager()
         {
-            var conf = Configuration.Load();
-            BypassProcessList.UnionWith(conf.Exemptions.Select(x => x.ToLowerInvariant()));
+            var settings = Settings.Load();
+            BypassProcessList.UnionWith(settings.Exemptions.Select(x => x.ToLowerInvariant()));
 
             szControlBlock = Marshal.SizeOf<Win32Api.PROCESS_POWER_THROTTLING_STATE>();
             pThrottleOn = Marshal.AllocHGlobal(szControlBlock);
