@@ -1,9 +1,21 @@
-﻿using EnergyStar.Interop;
+using EnergyStar.Interop;
+using System.Runtime.InteropServices;
 
 namespace EnergyStar
 {
     internal class Program
     {
+        public delegate bool ConsoleCtrlDelegate(int CtrlType);  
+        [DllImport("kernel32.dll")]
+        private static extern bool SetConsoleCtrlHandler(ConsoleCtrlDelegate handlerRoutine, bool add);
+        static bool HandlerRoutine(int ctrlType)
+        {
+            cts.Cancel();
+            HookManager.UnsubscribeWindowEvents();
+            EnergyManager.RecoverAllUserProcesses();
+            return true;
+        }
+        
         static CancellationTokenSource cts = new CancellationTokenSource();
 
         static async void HouseKeepingThreadProc()
@@ -26,6 +38,7 @@ namespace EnergyStar
 
         static void Main(string[] args)
         {
+            SetConsoleCtrlHandler(new ConsoleCtrlDelegate(HandlerRoutine), true);
             // Well, this program only works for Windows Version starting with Cobalt...
             // Nickel or higher will be better, but at least it works in Cobalt
             //
@@ -48,20 +61,10 @@ namespace EnergyStar
             {
                 if (Event.GetMessage(out Win32WindowForegroundMessage msg, IntPtr.Zero, 0, 0))
                 {
-                    if (msg.Message == Event.WM_QUIT)
-                    {
-                        cts.Cancel();
-                        break;
-                    }
-
                     Event.TranslateMessage(ref msg);
                     Event.DispatchMessage(ref msg);
                 }
             }
-
-            cts.Cancel();
-            HookManager.UnsubscribeWindowEvents();
-            EnergyManager.RecoverAllUserProcesses();
         }
     }
 }
