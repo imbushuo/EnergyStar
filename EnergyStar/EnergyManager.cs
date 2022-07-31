@@ -184,5 +184,19 @@ namespace EnergyStar
                 Win32Api.CloseHandle(hProcess);
             }
         }
+        public static void RecoverAllUserProcesses()
+        {
+            var runningProcesses = Process.GetProcesses();
+            var currentSessionID = Process.GetCurrentProcess().SessionId;
+
+            var sameAsThisSession = runningProcesses.Where(p => p.SessionId == currentSessionID);
+            foreach (var proc in sameAsThisSession)
+            {
+                if (BypassProcessList.Contains($"{proc.ProcessName}.exe".ToLowerInvariant())) continue;
+                var hProcess = Win32Api.OpenProcess((uint)Win32Api.ProcessAccessFlags.SetInformation, false, (uint) proc.Id);
+                ToggleEfficiencyMode(hProcess, false);
+                Win32Api.CloseHandle(hProcess);
+            }
+        }
     }
 }
