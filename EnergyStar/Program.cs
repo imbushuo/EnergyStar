@@ -39,6 +39,7 @@ namespace EnergyStar
         static void Main(string[] args)
         {
             SetConsoleCtrlHandler(new ConsoleCtrlDelegate(HandlerRoutine), true);
+            
             // Well, this program only works for Windows Version starting with Cobalt...
             // Nickel or higher will be better, but at least it works in Cobalt
             //
