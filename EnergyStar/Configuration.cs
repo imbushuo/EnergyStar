@@ -1,9 +1,7 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using EnergyStar.Interop;
+using System.Security;
 using System.Text.Json;
 using System.Text.Json.Serialization;
-using System.Threading.Tasks;
 
 namespace EnergyStar
 {
@@ -13,14 +11,47 @@ namespace EnergyStar
 
         public static Settings Load()
         {
-            string json = File.ReadAllText("settings.json");
-            // TODO: optimize logic
             var options = new JsonSerializerOptions
             {
                 ReadCommentHandling = JsonCommentHandling.Skip,
             };
-            return JsonSerializer.Deserialize(json,
-                new SettingsJsonContext(options).Settings)!;
+            try
+            {
+                string json = File.ReadAllText("settings.json");
+                // TODO: optimize logic
+
+                return JsonSerializer.Deserialize(json,
+                    new SettingsJsonContext(options).Settings)!;
+            }
+            catch (Exception ex) when (
+                ex is IOException
+                || ex is SecurityException
+                || ex is UnauthorizedAccessException
+            )
+            {
+                // Show message box to the user since the console is hidden in InvisibleRelease mode.
+                Win32Api.MessageBox(IntPtr.Zero,
+                    "IO Error occurred when reading settings.json!",
+                    "EnergyStar Error", Win32Api.MB_ICONERROR | Win32Api.MB_OK);
+                Environment.Exit(1);
+            }
+            catch (JsonException)
+            {
+                Win32Api.MessageBox(IntPtr.Zero,
+                   "Failed to parse settings.json! Please check your settings.",
+                   "EnergyStar Error", Win32Api.MB_ICONERROR | Win32Api.MB_OK);
+                Environment.Exit(1);
+            }
+            catch (Exception ex)
+            {
+                Win32Api.MessageBox(IntPtr.Zero,
+                   $@"Unknown Error:
+{ex.Message}
+{ex.StackTrace}",
+                   "EnergyStar Error", Win32Api.MB_ICONERROR | Win32Api.MB_OK);
+                Environment.Exit(1);
+            }
+            throw new InvalidOperationException("Unreachable code");
         }
     }
 
