@@ -7,19 +7,21 @@ namespace EnergyStar
 {
     internal class Settings
     {
-        public string[] Exemptions { get; set; } = new string[] { };
+        public string[] Exemptions { get; set; } = new string[0];
 
         public static Settings Load()
         {
             var options = new JsonSerializerOptions
             {
                 ReadCommentHandling = JsonCommentHandling.Skip,
+                // This `options` object overwrites the generated default options, 
+                // so we need to specify `PropertyNamingPolicy` again here.
+                PropertyNamingPolicy = JsonNamingPolicy.CamelCase
             };
             try
             {
-                string json = File.ReadAllText("settings.json");
-                // TODO: optimize logic
-
+                string path = Path.Combine(AppDomain.CurrentDomain.BaseDirectory, "settings.json");
+                string json = File.ReadAllText(path);
                 return JsonSerializer.Deserialize(json,
                     new SettingsJsonContext(options).Settings)!;
             }
