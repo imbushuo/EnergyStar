@@ -9,40 +9,10 @@ namespace EnergyStar
     {
         public static readonly HashSet<string> BypassProcessList = new HashSet<string>
         {
-            // Not ourselves
-            "EnergyStar.exe".ToLowerInvariant(),
-            // Edge has energy awareness
-            "msedge.exe",
-            "WebViewHost.exe".ToLowerInvariant(),
-            // UWP Frame has special handling, should not be throttled
-            "ApplicationFrameHost.exe".ToLowerInvariant(),
-            // Fire extinguisher should not catch fire
-            "taskmgr.exe",
-            "procmon.exe",
-            "procmon64.exe",
-            // Widgets
-            "Widgets.exe".ToLowerInvariant(),
-            // System shell
-            "dwm.exe",
-            "explorer.exe",
-            "ShellExperienceHost.exe".ToLowerInvariant(),
-            "StartMenuExperienceHost.exe".ToLowerInvariant(),
-            "SearchHost.exe".ToLowerInvariant(),
-            "sihost.exe",
-            "fontdrvhost.exe",
-            // IME
-            "ChsIME.exe".ToLowerInvariant(),
-            "ctfmon.exe",
 #if DEBUG
             // Visual Studio
             "devenv.exe",
 #endif
-            // System Service - they have their awareness
-            "csrss.exe",
-            "smss.exe",
-            "svchost.exe",
-            // WUDF
-            "WUDFRd.exe".ToLowerInvariant(),
         };
         // Speical handling needs for UWP to get the child window process
         public const string UWPFrameHostApp = "ApplicationFrameHost.exe";
@@ -56,6 +26,9 @@ namespace EnergyStar
 
         static EnergyManager()
         {
+            var conf = Configuration.Load();
+            BypassProcessList.UnionWith(conf.Exemptions.Select(x => x.ToLowerInvariant()));
+
             szControlBlock = Marshal.SizeOf<Win32Api.PROCESS_POWER_THROTTLING_STATE>();
             pThrottleOn = Marshal.AllocHGlobal(szControlBlock);
             pThrottleOff = Marshal.AllocHGlobal(szControlBlock);
@@ -105,12 +78,12 @@ namespace EnergyStar
             if (windowThreadId == 0 || procId == 0) return;
 
             var procHandle = Win32Api.OpenProcess(
-                (uint) (Win32Api.ProcessAccessFlags.QueryLimitedInformation | Win32Api.ProcessAccessFlags.SetInformation), false, procId);
+                (uint)(Win32Api.ProcessAccessFlags.QueryLimitedInformation | Win32Api.ProcessAccessFlags.SetInformation), false, procId);
             if (procHandle == IntPtr.Zero) return;
 
             // Get the process
             var appName = GetProcessNameFromHandle(procHandle);
-            
+
             // UWP needs to be handled in a special case
             if (appName == UWPFrameHostApp)
             {
@@ -179,7 +152,7 @@ namespace EnergyStar
             {
                 if (proc.Id == pendingProcPid) continue;
                 if (BypassProcessList.Contains($"{proc.ProcessName}.exe".ToLowerInvariant())) continue;
-                var hProcess = Win32Api.OpenProcess((uint)Win32Api.ProcessAccessFlags.SetInformation, false, (uint) proc.Id);
+                var hProcess = Win32Api.OpenProcess((uint)Win32Api.ProcessAccessFlags.SetInformation, false, (uint)proc.Id);
                 ToggleEfficiencyMode(hProcess, true);
                 Win32Api.CloseHandle(hProcess);
             }
