@@ -5,7 +5,7 @@ on: [push, pull_request]
 jobs:
   build:
 
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
     - uses: actions/checkout@v3
@@ -20,14 +20,14 @@ jobs:
     - name: Test
       run: dotnet test --no-build --verbosity normal
     - name: Publish for win-x64
-      run: dotnet publish -c Release -r win-x64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:PublishTrimmed=True
+      run: dotnet publish -c Release -r win-x64 --self-contained true
     - name: Publish for win-arm64
-      run: dotnet publish -c Release -r win-arm64 --self-contained true -p:PublishSingleFile=true -p:PublishReadyToRun=true -p:PublishTrimmed=True
+      run: dotnet publish -c Release -r win-arm64 --self-contained true
     - uses: actions/upload-artifact@v3
       with:
         name: release-win-x64
-        path: /home/runner/work/EnergyStar/EnergyStar/EnergyStar/bin/Release/net6.0/win-x64/publish/EnergyStar.exe
+        path: ${{ github.workspace }}/EnergyStar/bin/Release/net6.0/win-x64/publish/EnergyStar.exe
     - uses: actions/upload-artifact@v3
       with:
         name: release-win-arm64
-        path: /home/runner/work/EnergyStar/EnergyStar/EnergyStar/bin/Release/net6.0/win-arm64/publish/EnergyStar.exe
+        path: ${{ github.workspace }}/EnergyStar/bin/Release/net6.0/win-arm64/publish/EnergyStar.exe
