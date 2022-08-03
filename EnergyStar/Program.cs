@@ -1,4 +1,5 @@
 ﻿using EnergyStar.Interop;
+using Microsoft.Win32;
 
 namespace EnergyStar
 {
@@ -24,6 +25,25 @@ namespace EnergyStar
             }
         }
 
+        static void SystemEventsPowerModeChanged()
+        {
+            Win32Api.SYSTEM_POWER_STATUS powerStatus = Win32Api.GetSystemPowerStatus();
+
+            switch (powerStatus.ACLineStatus)
+            {
+                case Win32Api.SYSTEM_POWER_STATUS.AC_LINE_STATUS_OFFLINE:
+                    EnergyManager.IsAcConnected = false;
+                    break;
+                case Win32Api.SYSTEM_POWER_STATUS.AC_LINE_STATUS_ONLINE:
+                    EnergyManager.IsAcConnected = true;
+                    break;
+                default:
+                    break;
+            }
+
+            EnergyManager.ThrottleAllUserBackgroundProcesses();
+        }
+
         static void Main(string[] args)
         {
             // Well, this program only works for Windows Version starting with Cobalt...
@@ -38,11 +58,18 @@ namespace EnergyStar
                 Environment.Exit(120);
             }
 
+            // Call SystemEventsPowerModeChanged() to init the power adapter status.
+            SystemEventsPowerModeChanged();
+
             HookManager.SubscribeToWindowEvents();
             EnergyManager.ThrottleAllUserBackgroundProcesses();
 
             var houseKeepingThread = new Thread(new ThreadStart(HouseKeepingThreadProc));
             houseKeepingThread.Start();
+
+#pragma warning disable CA1416 // Validate platform compatibility
+            SystemEvents.PowerModeChanged += new PowerModeChangedEventHandler((object sender, PowerModeChangedEventArgs e) => SystemEventsPowerModeChanged());
+#pragma warning restore CA1416 // Validate platform compatibility
 
             while (true)
             {
