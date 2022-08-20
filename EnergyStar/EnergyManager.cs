@@ -47,6 +47,8 @@ namespace EnergyStar
         // Speical handling needs for UWP to get the child window process
         public const string UWPFrameHostApp = "ApplicationFrameHost.exe";
 
+        public static bool IsAcConnected { get; set; } = false;
+
         private static uint pendingProcPid = 0;
         private static string pendingProcName = "";
 
@@ -100,6 +102,8 @@ namespace EnergyStar
 
         public static unsafe void HandleForegroundEvent(IntPtr hwnd)
         {
+            if (IsAcConnected) return;
+
             var windowThreadId = Win32Api.GetWindowThreadProcessId(hwnd, out uint procId);
             // This is invalid, likely a process is dead, or idk
             if (windowThreadId == 0 || procId == 0) return;
@@ -180,7 +184,7 @@ namespace EnergyStar
                 if (proc.Id == pendingProcPid) continue;
                 if (BypassProcessList.Contains($"{proc.ProcessName}.exe".ToLowerInvariant())) continue;
                 var hProcess = Win32Api.OpenProcess((uint)Win32Api.ProcessAccessFlags.SetInformation, false, (uint) proc.Id);
-                ToggleEfficiencyMode(hProcess, true);
+                ToggleEfficiencyMode(hProcess, IsAcConnected ? false : true);
                 Win32Api.CloseHandle(hProcess);
             }
         }
