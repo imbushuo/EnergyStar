@@ -7,7 +7,7 @@ namespace EnergyStar
 {
     public unsafe class EnergyManager
     {
-        public static readonly HashSet<string> BypassProcessList = new HashSet<string>
+        public static readonly HashSet<string> DefaultBypassProcessList = new HashSet<string>
         {
             // Not ourselves
             "EnergyStar.exe".ToLowerInvariant(),
@@ -44,6 +44,7 @@ namespace EnergyStar
             // WUDF
             "WUDFRd.exe".ToLowerInvariant(),
         };
+        public static HashSet<string> BypassProcessList = DefaultBypassProcessList;
         // Speical handling needs for UWP to get the child window process
         public const string UWPFrameHostApp = "ApplicationFrameHost.exe";
 
@@ -183,6 +184,16 @@ namespace EnergyStar
                 ToggleEfficiencyMode(hProcess, true);
                 Win32Api.CloseHandle(hProcess);
             }
+        }
+
+        public static void SetBypassProcessList(IEnumerable<string> newBypassList)
+        {
+            var list = new List<string>();
+
+            list.AddRange(DefaultBypassProcessList);
+            list.AddRange(newBypassList);
+
+            BypassProcessList = list.Distinct().ToHashSet();
         }
     }
 }

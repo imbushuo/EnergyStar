@@ -24,6 +24,46 @@ namespace EnergyStar
             }
         }
 
+        static void OnBypassListChanged(object sender, FileSystemEventArgs e)
+        {
+            var path = e.FullPath;
+            if (path == null)
+                return;
+
+            LoadBypassList(path);
+        }
+
+        static void LoadBypassList(string path)
+        {
+            if (File.Exists(path))
+            {
+                var file = File.OpenText(path);
+                var content = file.ReadToEnd();
+                file.Close();
+
+                if (content != null)
+                {
+                    var srcBypassList = content.Replace("\r\n", "\n").Split('\n');
+                    var bypassList = new List<string> { };
+                    // Remove empty items
+                    foreach (var item in srcBypassList)
+                    {
+                        var trimed = item.Trim().ToLowerInvariant();
+                        if (trimed.Length > 0)
+                        {
+                            bypassList.Add(trimed);
+                        }
+                    }
+
+                    if (bypassList != null)
+                    {
+                        EnergyManager.SetBypassProcessList(bypassList);
+                        Console.WriteLine("Bypass list updated");
+                    }
+                }
+            }
+        }
+
         static void Main(string[] args)
         {
             // Well, this program only works for Windows Version starting with Cobalt...
@@ -37,6 +77,23 @@ namespace EnergyStar
                 // ERROR_CALL_NOT_IMPLEMENTED
                 Environment.Exit(120);
             }
+
+            // Load bypass list and watch for changes.
+            var baseDir = AppDomain.CurrentDomain.BaseDirectory;
+            var bypassListFile = Path.Combine(baseDir, "bypass.txt");
+            using var bypassListWatcher = new FileSystemWatcher(baseDir);
+
+            bypassListWatcher.Changed += OnBypassListChanged;
+            bypassListWatcher.Created += OnBypassListChanged;
+            bypassListWatcher.Deleted += OnBypassListChanged;
+            bypassListWatcher.Renamed += OnBypassListChanged;
+
+            bypassListWatcher.Filter = "bypass.txt";
+            bypassListWatcher.IncludeSubdirectories = true;
+            bypassListWatcher.EnableRaisingEvents = true;
+
+            LoadBypassList(bypassListFile);
+
 
             HookManager.SubscribeToWindowEvents();
             EnergyManager.ThrottleAllUserBackgroundProcesses();
